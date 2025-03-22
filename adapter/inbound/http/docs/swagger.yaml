@@ -1,0 +1,156 @@
+basePath: /v1
+definitions:
+  dto.BaseDto:
+    properties:
+      data: {}
+      error: {}
+      message:
+        type: string
+      success;default:false:
+        type: boolean
+    type: object
+  dto.CreateUserInDto:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.FindUserInDto:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  entity.User:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      updated_at:
+        type: string
+    type: object
+info:
+  contact:
+    email: zferraz.rf@gmail.com
+    name: Roberto Filho
+  description: Swagger API for finance service.
+  termsOfService: http://swagger.io/terms/
+  title: Finance api
+  version: "1.0"
+paths:
+  /no-auth/users/signing:
+    post:
+      consumes:
+      - application/json
+      description: Router for signing
+      operationId: Signing
+      parameters:
+      - description: signing payload
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FindUserInDto'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+      summary: signing
+      tags:
+      - User
+  /no-auth/users/signup:
+    post:
+      consumes:
+      - application/json
+      description: Router for create user
+      operationId: createUser
+      parameters:
+      - description: create user payload
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserInDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+      summary: create user
+      tags:
+      - User
+  /users/:
+    get:
+      consumes:
+      - application/json
+      description: Router for get all users
+      operationId: getUsers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+      security:
+      - ApiKeyAuth: []
+      summary: get users
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
