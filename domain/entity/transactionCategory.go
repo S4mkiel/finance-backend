@@ -1,20 +1,27 @@
 package entity
 
-import "github.com/asaskevich/govalidator"
+import (
+	"errors"
+	"github.com/asaskevich/govalidator"
+)
 
 func init() {
+	// Criando um mapa de categorias válidas para reduzir repetições
+	validCategories := map[string]bool{
+		TRANSACTION_CATEGORY_FOOD.String():          true,
+		TRANSACTION_CATEGORY_TRANSPORT.String():     true,
+		TRANSACTION_CATEGORY_ENTERTAINMENT.String(): true,
+		TRANSACTION_CATEGORY_HEALTH.String():        true,
+		TRANSACTION_CATEGORY_BILLS.String():         true,
+		TRANSACTION_CATEGORY_EDUCATION.String():     true,
+		TRANSACTION_CATEGORY_SHOPPING.String():      true,
+		TRANSACTION_CATEGORY_INVESTMENT.String():    true,
+		TRANSACTION_CATEGORY_SALARY.String():        true,
+		TRANSACTION_CATEGORY_OTHERS.String():        true,
+	}
+
 	govalidator.TagMap["transactionCategory"] = govalidator.Validator(func(str string) bool {
-		res := str == TRANSACTION_CATEGORY_FOOD.String()
-		res = res || str == TRANSACTION_CATEGORY_TRANSPORT.String()
-		res = res || str == TRANSACTION_CATEGORY_ENTERTAINMENT.String()
-		res = res || str == TRANSACTION_CATEGORY_HEALTH.String()
-		res = res || str == TRANSACTION_CATEGORY_BILLS.String()
-		res = res || str == TRANSACTION_CATEGORY_EDUCATION.String()
-		res = res || str == TRANSACTION_CATEGORY_SHOPPING.String()
-		res = res || str == TRANSACTION_CATEGORY_INVESTMENT.String()
-		res = res || str == TRANSACTION_CATEGORY_SALARY.String()
-		res = res || str == TRANSACTION_CATEGORY_OTHERS.String()
-		return res
+		return validCategories[str]
 	})
 
 	govalidator.SetFieldsRequiredByDefault(true)
@@ -35,11 +42,6 @@ const (
 	TRANSACTION_CATEGORY_OTHERS
 )
 
-func newTransactionCategory[T TransactionCategory | int](transactionCategory T) *TransactionCategory {
-	v := (TransactionCategory)(transactionCategory)
-	return &v
-}
-
 func (t TransactionCategory) String() string {
 	switch t {
 	case TRANSACTION_CATEGORY_FOOD:
@@ -58,13 +60,59 @@ func (t TransactionCategory) String() string {
 		return "shopping"
 	case TRANSACTION_CATEGORY_INVESTMENT:
 		return "investment"
+	case TRANSACTION_CATEGORY_SALARY:
+		return "salary"
 	case TRANSACTION_CATEGORY_OTHERS:
 		return "others"
+	default:
+		return ""
 	}
-	return ""
 }
 
-func (e *TransactionCategory) isValid() error {
-	_, err := govalidator.ValidateStruct(e)
-	return err
+func NewTransactionCategory[T int | string](value T) (*TransactionCategory, error) {
+	var v TransactionCategory
+
+	switch val := any(value).(type) {
+	case int:
+		if val < int(TRANSACTION_CATEGORY_FOOD) || val > int(TRANSACTION_CATEGORY_OTHERS) {
+			return nil, errors.New("invalid transaction category")
+		}
+		v = TransactionCategory(val)
+	case string:
+		switch val {
+		case "food":
+			v = TRANSACTION_CATEGORY_FOOD
+		case "transport":
+			v = TRANSACTION_CATEGORY_TRANSPORT
+		case "entertainment":
+			v = TRANSACTION_CATEGORY_ENTERTAINMENT
+		case "health":
+			v = TRANSACTION_CATEGORY_HEALTH
+		case "bills":
+			v = TRANSACTION_CATEGORY_BILLS
+		case "education":
+			v = TRANSACTION_CATEGORY_EDUCATION
+		case "shopping":
+			v = TRANSACTION_CATEGORY_SHOPPING
+		case "investment":
+			v = TRANSACTION_CATEGORY_INVESTMENT
+		case "salary":
+			v = TRANSACTION_CATEGORY_SALARY
+		case "others":
+			v = TRANSACTION_CATEGORY_OTHERS
+		default:
+			return nil, errors.New("invalid transaction category string")
+		}
+	default:
+		return nil, errors.New("unsupported transaction category format")
+	}
+
+	return &v, nil
+}
+
+func (t TransactionCategory) IsValid() error {
+	if t < TRANSACTION_CATEGORY_FOOD || t > TRANSACTION_CATEGORY_OTHERS {
+		return errors.New("invalid transaction category")
+	}
+	return nil
 }

@@ -119,6 +119,215 @@ const docTemplate = `{
                 }
             }
         },
+        "/transaction/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieves transactions based on filters provided in query parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Get transactions by user with filters",
+                "operationId": "getTransactions",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Minimum transaction amount",
+                        "name": "startAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum transaction amount",
+                        "name": "endAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Transaction type (0 for income, 1 for expense)",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Transaction category",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start date (format: YYYY-MM-DDT00:00)",
+                        "name": "startDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date (format: YYYY-MM-DDT00:00)",
+                        "name": "endDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search transactions by notes",
+                        "name": "notes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter transactions by currency",
+                        "name": "currency",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Router for create transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "create transaction",
+                "operationId": "createTransaction",
+                "parameters": [
+                    {
+                        "description": "create user payload",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateTransactionInDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Router for find transaction by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "find transaction by id",
+                "operationId": "findTransaction",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Transaction"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.BaseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/users/": {
             "get": {
                 "security": [
@@ -172,12 +381,40 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {},
-                "error": {},
+                "error": {
+                    "type": "string"
+                },
                 "message": {
                     "type": "string"
                 },
                 "success;default:false": {
                     "type": "boolean"
+                }
+            }
+        },
+        "dto.CreateTransactionInDto": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "category": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "transactionType": {
+                    "type": "integer"
+                },
+                "userID": {
+                    "type": "string"
                 }
             }
         },
@@ -205,6 +442,82 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "entity.Transaction": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "category": {
+                    "$ref": "#/definitions/entity.TransactionCategory"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "transaction_type": {
+                    "$ref": "#/definitions/entity.TransactionType"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/entity.User"
+                }
+            }
+        },
+        "entity.TransactionCategory": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ],
+            "x-enum-varnames": [
+                "TRANSACTION_CATEGORY_FOOD",
+                "TRANSACTION_CATEGORY_TRANSPORT",
+                "TRANSACTION_CATEGORY_ENTERTAINMENT",
+                "TRANSACTION_CATEGORY_HEALTH",
+                "TRANSACTION_CATEGORY_BILLS",
+                "TRANSACTION_CATEGORY_EDUCATION",
+                "TRANSACTION_CATEGORY_SHOPPING",
+                "TRANSACTION_CATEGORY_INVESTMENT",
+                "TRANSACTION_CATEGORY_SALARY",
+                "TRANSACTION_CATEGORY_OTHERS"
+            ]
+        },
+        "entity.TransactionType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "TRANSACTION_TYPE_INCOME",
+                "TRANSACTION_TYPE_EXPENSE"
+            ]
         },
         "entity.User": {
             "type": "object",

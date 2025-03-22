@@ -93,7 +93,7 @@ func (h *UserNoAuthHandler) Signing(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := h.Uc.Find(c.Context(), &in)
+	token, err := h.Uc.FindUser(c.Context(), &in)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(dto.BaseDto{
 			Success: utils.PBool(false),

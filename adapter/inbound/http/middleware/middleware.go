@@ -33,12 +33,7 @@ func AuthMiddleware(c *fiber.Ctx) error {
 		})
 	}
 
-	if claims.ExpiresAt.Time.Before(time.Now()) {
-		return c.Status(fiber.StatusUnauthorized).JSON(dto.BaseDto{
-			Success: utils.PBool(false),
-			Message: utils.PString("Unauthorized: Token expired"),
-		})
-	}
+	c.Locals("userID", claims.UserID)
 
 	return c.Next()
 }

@@ -13,3 +13,4 @@ tmp/
 
 .env
 .tool-versions
+.idea

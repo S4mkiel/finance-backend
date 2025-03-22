@@ -56,7 +56,7 @@ var M_2025032002200 *gormigrate.Migration = func() *gormigrate.Migration {
 		Amount          *float64
 		TransactionType *TransactionType
 		Category        *TransactionCategory
-		Date            *time.Time `gorm:"column:date"`
+		Date            *time.Time `gorm:"column:date;type:timestamp"`
 		Notes           *string    `gorm:"type:text"`
 		Currency        *string    `gorm:"type:varchar(255)"`
 		UserID          *string    `gorm:"type:varchar(255)"`
@@ -69,7 +69,7 @@ var M_2025032002200 *gormigrate.Migration = func() *gormigrate.Migration {
 		TransactionType *TransactionType
 		Category        *TransactionCategory
 		Frequency       *string    `gorm:"type:varchar(20)"`
-		NextDate        *time.Time `gorm:"column:next_date"`
+		NextDate        *time.Time `gorm:"column:next_date;type:timestamp"`
 		UserID          *string    `gorm:"type:varchar(255)"`
 		User            *User      `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	}
@@ -79,7 +79,7 @@ var M_2025032002200 *gormigrate.Migration = func() *gormigrate.Migration {
 		Title    *string    `json:"title" valid:"required"`
 		Target   *float64   `json:"target" valid:"required"`
 		Current  *float64   `gorm:"type:decimal(20,8)"`
-		Deadline *time.Time `gorm:"column:dead_line"`
+		Deadline *time.Time `gorm:"column:dead_line;type:timestamp'"`
 		UserID   *string    `gorm:"type:varchar(255)"`
 		User     *User      `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	}

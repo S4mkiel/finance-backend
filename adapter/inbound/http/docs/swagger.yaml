@@ -3,11 +3,29 @@ definitions:
   dto.BaseDto:
     properties:
       data: {}
-      error: {}
+      error:
+        type: string
       message:
         type: string
       success;default:false:
         type: boolean
+    type: object
+  dto.CreateTransactionInDto:
+    properties:
+      amount:
+        type: number
+      category:
+        type: integer
+      currency:
+        type: string
+      date:
+        type: string
+      notes:
+        type: string
+      transactionType:
+        type: integer
+      userID:
+        type: string
     type: object
   dto.CreateUserInDto:
     properties:
@@ -25,6 +43,63 @@ definitions:
       password:
         type: string
     type: object
+  entity.Transaction:
+    properties:
+      amount:
+        type: number
+      category:
+        $ref: '#/definitions/entity.TransactionCategory'
+      created_at:
+        type: string
+      currency:
+        type: string
+      date:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      transaction_type:
+        $ref: '#/definitions/entity.TransactionType'
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/entity.User'
+    type: object
+  entity.TransactionCategory:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    type: integer
+    x-enum-varnames:
+    - TRANSACTION_CATEGORY_FOOD
+    - TRANSACTION_CATEGORY_TRANSPORT
+    - TRANSACTION_CATEGORY_ENTERTAINMENT
+    - TRANSACTION_CATEGORY_HEALTH
+    - TRANSACTION_CATEGORY_BILLS
+    - TRANSACTION_CATEGORY_EDUCATION
+    - TRANSACTION_CATEGORY_SHOPPING
+    - TRANSACTION_CATEGORY_INVESTMENT
+    - TRANSACTION_CATEGORY_SALARY
+    - TRANSACTION_CATEGORY_OTHERS
+  entity.TransactionType:
+    enum:
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - TRANSACTION_TYPE_INCOME
+    - TRANSACTION_TYPE_EXPENSE
   entity.User:
     properties:
       created_at:
@@ -117,6 +192,141 @@ paths:
       summary: create user
       tags:
       - User
+  /transaction/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves transactions based on filters provided in query parameters
+      operationId: getTransactions
+      parameters:
+      - description: Minimum transaction amount
+        in: query
+        name: startAmount
+        type: number
+      - description: Maximum transaction amount
+        in: query
+        name: endAmount
+        type: number
+      - description: Transaction type (0 for income, 1 for expense)
+        in: query
+        name: type
+        type: integer
+      - description: Transaction category
+        in: query
+        name: category
+        type: integer
+      - description: 'Start date (format: YYYY-MM-DDT00:00)'
+        in: query
+        name: startDate
+        type: string
+      - description: 'End date (format: YYYY-MM-DDT00:00)'
+        in: query
+        name: endDate
+        type: string
+      - description: Search transactions by notes
+        in: query
+        name: notes
+        type: string
+      - description: Filter transactions by currency
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+      security:
+      - ApiKeyAuth: []
+      summary: Get transactions by user with filters
+      tags:
+      - Transaction
+    post:
+      consumes:
+      - application/json
+      description: Router for create transaction
+      operationId: createTransaction
+      parameters:
+      - description: create user payload
+        in: body
+        name: _
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionInDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+      security:
+      - ApiKeyAuth: []
+      summary: create transaction
+      tags:
+      - Transaction
+  /transaction/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Router for find transaction by id
+      operationId: findTransaction
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.BaseDto'
+      security:
+      - ApiKeyAuth: []
+      summary: find transaction by id
+      tags:
+      - Transaction
   /users/:
     get:
       consumes:
