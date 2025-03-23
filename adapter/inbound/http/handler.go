@@ -11,6 +11,8 @@ var HandlerModule = fx.Module(
 	handler.SwaggerHandlerModule,
 	handler.UserHandlerModule,
 	handler.UserNoAuthHandlerModule,
+	handler.TransactionHandlerModule,
+	handler.RecurringTransactionHandlerModule,
 	fx.Invoke(HandleRoutes),
 )
 
@@ -19,6 +21,8 @@ func HandleRoutes(
 	swaggerHandler *handler.SwaggerHandler,
 	userHandler *handler.UserHandler,
 	userNoAuthHandler *handler.UserNoAuthHandler,
+	transactionHandler *handler.TransactionHandler,
+	recurringTransactionHandler *handler.RecurringTransactionHandler,
 ) {
 	http.App.Get("/", func(c *fiber.Ctx) error {
 		return c.Redirect("/v1/swagger/index.html")
@@ -30,5 +34,8 @@ func HandleRoutes(
 
 	swaggerHandler.RegisterRoutes(v1)
 	userHandler.RegisterRoutes(v1)
+	transactionHandler.RegisterRoutes(v1)
+	recurringTransactionHandler.RegisterRoutes(v1)
+
 	userNoAuthHandler.RegisterRoutes(noAuth)
 }

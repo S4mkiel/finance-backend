@@ -52,3 +52,30 @@ type FindTransactionInDto struct {
 	UserID *string
 	ID     *string
 }
+
+type CreateRecurringTransactionInDto struct {
+	UserID          *string
+	Amount          *float64
+	TransactionType *int
+	Category        *int
+	Frequency       *string
+	NextDate        *time.Time
+}
+
+type FindRecurringTransactionInDto struct {
+	UserID *string
+	ID     *string
+}
+
+type GetRecurringTransactionsInDto struct {
+	UserID          *string
+	StartAmount     *float64
+	EndAmount       *float64
+	TransactionType *int
+	Category        *int
+	StartDate       *time.Time
+	EndDate         *time.Time
+	Frequency       *string
+	Currency        *string
+	NextDate        *time.Time
+}

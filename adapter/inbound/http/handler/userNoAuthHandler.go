@@ -56,15 +56,15 @@ func (h *UserNoAuthHandler) CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	user, err := h.Uc.CreateUser(c.Context(), &in)
+	user, httpResp, err := h.Uc.CreateUser(c.Context(), &in)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dto.BaseDto{
+		return c.Status(*httpResp).JSON(dto.BaseDto{
 			Success: utils.PBool(false),
 			Error:   utils.PString(err.Error()),
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.BaseDto{
+	return c.Status(*httpResp).JSON(dto.BaseDto{
 		Success: utils.PBool(true),
 		Message: utils.PString("User created"),
 		Data:    user,
@@ -93,15 +93,15 @@ func (h *UserNoAuthHandler) Signing(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := h.Uc.FindUser(c.Context(), &in)
+	token, httpResp, err := h.Uc.FindUser(c.Context(), &in)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(dto.BaseDto{
+		return c.Status(*httpResp).JSON(dto.BaseDto{
 			Success: utils.PBool(false),
 			Error:   utils.PString(err.Error()),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.BaseDto{
+	return c.Status(*httpResp).JSON(dto.BaseDto{
 		Success: utils.PBool(true),
 		Message: utils.PString("Sign in successful"),
 		Data:    token,

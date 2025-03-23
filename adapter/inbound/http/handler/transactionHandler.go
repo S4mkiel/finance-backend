@@ -62,15 +62,15 @@ func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 
 	in.UserID = utils.PString(userID)
 
-	transaction, err := h.Uc.CreateTransaction(c.Context(), &in)
+	transaction, httResp, err := h.Uc.CreateTransaction(c.Context(), &in)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dto.BaseDto{
+		return c.Status(*httResp).JSON(dto.BaseDto{
 			Success: utils.PBool(false),
 			Error:   utils.PString(err.Error()),
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.BaseDto{
+	return c.Status(*httResp).JSON(dto.BaseDto{
 		Success: utils.PBool(true),
 		Message: utils.PString("transaction created successfully"),
 		Data:    transaction,
@@ -101,8 +101,8 @@ func (h *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
 func (h *TransactionHandler) GetTransactions(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(string)
 
-	startAmount := c.Query("startAmount")
-	endAmount := c.Query("endAmount")
+	startAmount := c.QueryFloat("startAmount")
+	endAmount := c.QueryFloat("endAmount")
 	transactionType := c.QueryInt("type")
 	category := c.QueryInt("category")
 	startDate := c.Query("startDate")
@@ -112,8 +112,8 @@ func (h *TransactionHandler) GetTransactions(c *fiber.Ctx) error {
 
 	in := dto.GetTransactionsInDto{
 		UserID:          utils.PString(userID),
-		StartAmount:     utils.TSFloat64(startAmount),
-		EndAmount:       utils.TSFloat64(endAmount),
+		StartAmount:     utils.Float64IfNotNil(startAmount),
+		EndAmount:       utils.Float64IfNotNil(endAmount),
 		TransactionType: utils.IntIfNotNil(transactionType),
 		Category:        utils.IntIfNotNil(category),
 		StartDate:       utils.TSTime(startDate),
@@ -122,15 +122,15 @@ func (h *TransactionHandler) GetTransactions(c *fiber.Ctx) error {
 		Currency:        utils.StringIfNotNil(currency),
 	}
 
-	transaction, err := h.Uc.GetTransactions(c.Context(), &in)
+	transaction, httpResp, err := h.Uc.GetTransactions(c.Context(), &in)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dto.BaseDto{
+		return c.Status(*httpResp).JSON(dto.BaseDto{
 			Success: utils.PBool(false),
 			Error:   utils.PString(err.Error()),
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(dto.BaseDto{
+	return c.Status(*httpResp).JSON(dto.BaseDto{
 		Success: utils.PBool(true),
 		Message: utils.PString("transactions founded with successfully"),
 		Data:    transaction,
@@ -160,15 +160,15 @@ func (h *TransactionHandler) FindTransaction(c *fiber.Ctx) error {
 	in.UserID = utils.PString(userID)
 	in.ID = utils.PString(id)
 
-	transaction, err := h.Uc.FindTransaction(c.Context(), &in)
+	transaction, httpResp, err := h.Uc.FindTransaction(c.Context(), &in)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dto.BaseDto{
+		return c.Status(*httpResp).JSON(dto.BaseDto{
 			Success: utils.PBool(false),
 			Error:   utils.PString(err.Error()),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.BaseDto{
+	return c.Status(*httpResp).JSON(dto.BaseDto{
 		Success: utils.PBool(true),
 		Message: utils.PString("transaction found successfully"),
 		Data:    transaction,

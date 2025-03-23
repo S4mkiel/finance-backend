@@ -46,15 +46,15 @@ func (h *UserHandler) RegisterRoutes(r fiber.Router) {
 // @Failure 404 {object} dto.BaseDto
 // @Router /users/ [get]
 func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
-	user, err := h.Uc.GetUsers(c.Context(), &dto.GetUsersInDto{})
+	user, httpResp, err := h.Uc.GetUsers(c.Context(), &dto.GetUsersInDto{})
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(dto.BaseDto{
+		return c.Status(*httpResp).JSON(dto.BaseDto{
 			Success: utils.PBool(false),
 			Error:   utils.PString(err.Error()),
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(dto.BaseDto{
+	return c.Status(*httpResp).JSON(dto.BaseDto{
 		Success: utils.PBool(true),
 		Message: utils.PString("List of users"),
 		Data:    user,
