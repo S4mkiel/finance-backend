@@ -79,7 +79,7 @@ var M_2025032002200 *gormigrate.Migration = func() *gormigrate.Migration {
 		Title    *string    `json:"title" valid:"required"`
 		Target   *float64   `json:"target" valid:"required"`
 		Current  *float64   `gorm:"type:decimal(20,8)"`
-		Deadline *time.Time `gorm:"column:dead_line;type:timestamp'"`
+		Deadline *time.Time `gorm:"column:dead_line;type:timestamp"`
 		UserID   *string    `gorm:"type:varchar(255)"`
 		User     *User      `gorm:"foreignKey:UserID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	}
